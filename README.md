@@ -19,6 +19,7 @@ that number is proven by trying every alternative:
 | Nearest first (5 cities on a 6x6 map) | worst ratio 1.389 | all 1.9 million placements (the star asks for the worst, not the smallest) |
 | More votes (instant runoff, 3 candidates) | 17 voters | every electorate of 16 or fewer, every way of moving A higher on any ballots; results with a tie don't count (also `proto/irv.mjs`) |
 | Showing up (instant runoff, no-show paradox) | 11 voters, newcomers included | every election of 10 or fewer and every group of newcomers (any mix of ballots), each ranking the old winner above the new one; ties don't count (also `proto/noshow2.mjs`) |
+| One more seat (Hamilton's method, Alabama paradox) | 7 million people | every population of 3 states totalling 6 million or less, every house size (seats repeat every P seats for a population of P); ties don't count (also `proto/alabama.mjs`, which also shows 4 states need 9 and 2 states never do it) |
 | More memory (Bélády's anomaly) | 12 requests | every list of 11 or fewer; with five pages, ABCDABEABCDE is the only one of 12 |
 | Fewest clashes | 10 meetings | all 94,143,280 lists of 9 on the 8-hour day (`proto/iv.c`, about 2 minutes) |
 

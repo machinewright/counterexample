@@ -169,3 +169,20 @@ test('noshow: 11 voters (newcomers included) is the smallest no-show failure (no
     }
   }
 });
+
+test('seats: 7 million is the smallest Alabama paradox under Hamilton (no ties)', async () => {
+  const { hamilton } = await import('../src/algo.js');
+  const lv = LEVELS.find(l => l.id === 'seats');
+  assert.equal(lv.bonus.smallest, 7);
+  assert.deepEqual(hamilton([1, 3, 3], 3).seats, [1, 1, 1]);
+  assert.deepEqual(hamilton([1, 3, 3], 4).seats, [0, 2, 2]);
+  const s = lv.start, a = hamilton(s, lv.startSeats).seats, b = hamilton(s, lv.startSeats + 1).seats;
+  assert.ok(a && b && !b.some((x, i) => x < a[i]), 'start position must not be broken');
+  for (let P = 3; P < 7; P++) for (let x = 1; x < P; x++) for (let y = 1; x + y < P; y++) {
+    const pops = [x, y, P - x - y];
+    for (let h = 1; h <= 3 * P; h++) { // seats repeat with period P; 3P is a margin
+      const u = hamilton(pops, h).seats, v = hamilton(pops, h + 1).seats;
+      assert.ok(!(u && v && v.some((k, i) => k < u[i])), `${pops} ${h}`);
+    }
+  }
+});

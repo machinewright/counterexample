@@ -201,3 +201,17 @@ export function runoff(ballots) {
   const r2 = tally(lows[0]), [p, q] = Object.keys(r2);
   return { rounds: [r1, r2], out: lows[0], winner: r2[p] === r2[q] ? null : r2[p] > r2[q] ? p : q, tie: r2[p] === r2[q] ? 'final' : undefined };
 }
+
+/** Hamilton's method (largest remainders): each state gets its exact share of `h` seats rounded down, and the seats
+ *  left over go to the largest fractions. Exact integer arithmetic. Returns { seats, rem, P }, with seats null when a
+ *  tie between fractions decides a seat. rem[i]/P is state i's fraction. */
+export function hamilton(pops, h) {
+  const P = pops.reduce((a, b) => a + b, 0);
+  if (!P) return { seats: null, rem: pops.map(() => 0), P };
+  const seats = pops.map(p => Math.floor(p * h / P)), rem = pops.map(p => (p * h) % P);
+  const left = h - seats.reduce((a, b) => a + b, 0);
+  const order = pops.map((_, i) => i).sort((a, b) => rem[b] - rem[a]);
+  if (left > 0 && left < pops.length && rem[order[left - 1]] === rem[order[left]]) return { seats: null, rem, P };
+  for (let k = 0; k < left; k++) seats[order[k]]++;
+  return { seats, rem, P };
+}

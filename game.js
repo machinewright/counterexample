@@ -6,8 +6,9 @@ import { mountMeetings } from './src/views/meetings.js';
 import { mountPaths } from './src/views/paths.js';
 import { mountTour } from './src/views/tour.js';
 import { mountRunoff } from './src/views/runoff.js';
+import { mountSeats } from './src/views/seats.js';
 
-const VIEWS = { coins: mountCoins, colour: mountColour, fifo: mountFifo, meetings: mountMeetings, paths: mountPaths, tour: mountTour, runoff: mountRunoff };
+const VIEWS = { coins: mountCoins, colour: mountColour, fifo: mountFifo, meetings: mountMeetings, paths: mountPaths, tour: mountTour, runoff: mountRunoff, seats: mountSeats };
 const KEY = 'counterexample-progress-v1';
 const $ = id => document.getElementById(id);
 let progress = {};
@@ -44,7 +45,7 @@ function verdict(lv, st) {
     const firstWin = !p.won;
     p.won = true; if (st.bonus) p.bonus = true; save(); nav();
     let star = '';
-    if (lv.bonus) star = st.bonus ? `<p class="star">★★ And it's the smallest possible. ${lv.bonus.done}</p>`
+    if (lv.bonus) star = st.bonus ? `<p class="star">★★ And it's the smallest possible. ${lv.bonus.done}</p>${lv.bonus.reveal ? `<p class="why">${lv.bonus.reveal}</p>` : ''}`
       : p.bonus ? '' : `<p class="star">★☆ For the second star: ${lv.bonus.goal}.</p>`;
     $('verdict').innerHTML = `<p class="broken">Claim broken.</p>${star}<p class="why">${lv.why}</p>`;
     $('next-btn').hidden = cur === LEVELS.length - 1;
