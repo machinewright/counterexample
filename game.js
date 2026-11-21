@@ -17,7 +17,8 @@ function nav() {
   $('levels').innerHTML = LEVELS.map((lv, i) => {
     const p = progress[lv.id] || {};
     const stars = p.won ? (lv.bonus ? (p.bonus ? '★★' : '★☆') : '★') : '';
-    return `<button data-i="${i}" ${i === cur ? 'aria-current="true"' : ''}>${i + 1}<span class="stars" aria-label="${p.won ? 'broken' : ''}">${stars}</span></button>`;
+    const label = `Level ${i + 1}, ${lv.title}${p.won ? ', broken' : ''}${p.bonus ? ', smallest found' : ''}`;
+    return `<button data-i="${i}" aria-label="${label}" ${i === cur ? 'aria-current="true"' : ''}>${i + 1}<span class="stars" aria-hidden="true">${stars}</span></button>`;
   }).join('');
   $('levels').querySelectorAll('button').forEach(b => b.addEventListener('click', () => load(+b.dataset.i)));
 }
