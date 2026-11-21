@@ -65,7 +65,7 @@ test('meetings: rules, best, and the smallest lists that fool them', () => {
   assert.equal(bestMeetings(I).length, 2);
   assert.deepEqual(greedyMeetings(I, 'shortest'), [2]);
   assert.deepEqual(greedyMeetings(I, 'start'), [1]);
-  for (const lv of LEVELS.filter(l => l.kind === 'meetings')) {
+  for (const lv of LEVELS.filter(l => l.kind === 'meetings' && (l.bonus?.smallest ?? 3) <= 4)) {
     const smallest = lv.bonus?.smallest ?? 3;
     for (let n = 1; n < smallest; n++) eachMeetingList(lv.hours, n, I => assert.ok(!fooled(lv, I), `${lv.id} ${JSON.stringify(I)}`));
     let found = 0; eachMeetingList(lv.hours, smallest, I => { if (fooled(lv, I)) found++; });
@@ -79,4 +79,11 @@ test('meetings: rules, best, and the smallest lists that fool them', () => {
     }
     assert.equal(bestMeetings(I).length, m);
   });
+});
+
+test('fewest clashes: a 10-meeting trap; nothing up to 5 meetings works (9 is checked by proto/iv.c)', () => {
+  const lv = L('clashes');
+  const I = [[0, 2], [1, 2], [0, 3], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [6, 7], [5, 8]];
+  assert.ok(fooled(lv, I)); assert.equal(I.length, lv.bonus.smallest);
+  for (let n = 1; n <= 5; n++) eachMeetingList(lv.hours, n, J => assert.ok(!fooled(lv, J)));
 });

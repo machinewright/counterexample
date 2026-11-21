@@ -107,3 +107,4 @@ footer { margin-top: 3em; color: var(--muted); font-size: 14.5px; border-top: 1p
   .x { padding: 3px 6px; }
   .track.new .muted { font-size: 12px; }
 }
+.mk.cnt { color: #a8650f; font-weight: 500; }

@@ -15,5 +15,5 @@ int greedy(int n){ int alive[16]; for(int i=0;i<n;i++)alive[i]=1; int cnt=0;
   return cnt;}
 void rec(int i,int from){ if(i==N){ if(greedy(N)<opt(N)){ if(!found++){ for(int k=0;k<N;k++)printf("[%d,%d) ",S[pick[k]],E[pick[k]]); printf("\n");} } return;}
   for(int a=from;a<M;a++){pick[i]=a;rec(i+1,a+1);} }
-int main(int c,char**v){T=atoi(v[1]);N=atoi(v[2]); M=0; for(int e=1;e<=T;e++)for(int s=e-1;s>=0;s--){S[M]=s;E[M]=e;M++;} // sorted by end, then start desc? 
+int main(int c,char**v){T=atoi(v[1]);N=atoi(v[2]); M=0; for(int e=1;e<=T;e++)for(int s=0;s<e;s++){S[M]=s;E[M]=e;M++;} // sorted by end, then start desc? 
   rec(0,0); printf("T=%d N=%d found=%ld\n",T,N,found);}

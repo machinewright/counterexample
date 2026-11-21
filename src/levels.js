@@ -74,6 +74,16 @@ export const LEVELS = [
     hint: 'The two caches throw out different pages at different times. Get the small cache to keep exactly the pages you are about to ask for, while the large one has just thrown them out.',
     why: 'This is Bélády\'s anomaly, found by László Bélády and colleagues at IBM in 1969: under first-in-first-out, more memory can mean more misses. The shortest request lists that show it have 12 requests, and with five pages there is only one, up to renaming them: A B C D A B E A B C D E (checked here by trying every list). An LRU cache can never do this: its contents with 3 slots are always among its contents with 4.',
   },
+  {
+    id: 'clashes', kind: 'meetings', title: 'Fewest clashes',
+    claim: 'The real trick: book the meeting that clashes with the fewest others. It gets in nobody\'s way.',
+    setup: 'Same room, a workday from 9 to 17. The rule counts how many of the remaining requests each one clashes with, books the one with the fewest, drops its clashes, and counts again (ties go to the one that ends first, then the one that starts first).',
+    rules: ['conflicts'], hours: 8, firstHour: 9, maxMeetings: 12,
+    goal: 'Make fewest-clashes book fewer meetings than the room could hold.',
+    bonus: { goal: 'the fewest meetings that work', done: 'No list of nine meetings or fewer on this day does it (checked by trying all 94 million lists of nine).', smallest: 10 },
+    hint: 'Plan the best schedule first: four meetings back to back. The rule should be tempted by one quiet meeting across the boundary between two of them. So make the four look busy: stack extra requests on them, but none on the quiet one.',
+    why: 'A clash count only looks at the neighbourhood. A meeting can look quiet while it sits exactly on the boundary between two meetings the best schedule needs; crowd those two with extra requests and the rule takes the quiet one. On this day it takes ten requests to set the trap, and no smaller list works. Booking whatever ends first, from level 3, still gets the best schedule every time.',
+  },
 ];
 
 for (const L of LEVELS) if (L.kind === 'colour') L.adj = adjacency(L.n, L.edges);
