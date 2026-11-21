@@ -5,8 +5,9 @@ import { mountFifo } from './src/views/fifo.js';
 import { mountMeetings } from './src/views/meetings.js';
 import { mountPaths } from './src/views/paths.js';
 import { mountTour } from './src/views/tour.js';
+import { mountRunoff } from './src/views/runoff.js';
 
-const VIEWS = { coins: mountCoins, colour: mountColour, fifo: mountFifo, meetings: mountMeetings, paths: mountPaths, tour: mountTour };
+const VIEWS = { coins: mountCoins, colour: mountColour, fifo: mountFifo, meetings: mountMeetings, paths: mountPaths, tour: mountTour, runoff: mountRunoff };
 const KEY = 'counterexample-progress-v1';
 const $ = id => document.getElementById(id);
 let progress = {};

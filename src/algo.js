@@ -181,3 +181,23 @@ export function bestTour(C) {
   })(0);
   return best;
 }
+
+/** Instant-runoff count with three candidates. `ballots` maps rankings like 'ACB' to voter counts.
+ *  Returns { rounds: [{A,B,C}, ...], out, winner } where winner is null on any tie that decides the result. */
+export function runoff(ballots) {
+  const n = Object.values(ballots).reduce((a, b) => a + b, 0);
+  const tally = skip => {
+    const t = {};
+    for (const c of 'ABC') if (c !== skip) t[c] = 0;
+    for (const [b, k] of Object.entries(ballots)) t[[...b].find(c => c !== skip)] += k;
+    return t;
+  };
+  const r1 = tally(null);
+  const maj = Object.keys(r1).find(c => 2 * r1[c] > n);
+  if (!n) return { rounds: [r1], out: null, winner: null };
+  if (maj) return { rounds: [r1], out: null, winner: maj };
+  const low = Math.min(...Object.values(r1)), lows = Object.keys(r1).filter(c => r1[c] === low);
+  if (lows.length > 1) return { rounds: [r1], out: null, winner: null, tie: 'last' };
+  const r2 = tally(lows[0]), [p, q] = Object.keys(r2);
+  return { rounds: [r1, r2], out: lows[0], winner: r2[p] === r2[q] ? null : r2[p] > r2[q] ? p : q, tie: r2[p] === r2[q] ? 'final' : undefined };
+}

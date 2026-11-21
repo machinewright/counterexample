@@ -105,6 +105,16 @@ export const LEVELS = [
     why: 'Each step is the cheapest one, but the route as a whole isn\'t: the city that is never nearest gets left until the end, and the final legs are long. With more cities it can get worse without limit, even on a flat map: the factor can grow with the logarithm of the number of cities, and no faster (Rosenkrantz, Stearns and Lewis proved the limit in 1977; Hougardy and Wilde built flat maps that reach it in 2014).',
   },
   {
+    id: 'runoff', kind: 'runoff', title: 'More votes',
+    claim: 'In a runoff vote, more support can only help. If some voters move the winner up to first place, the winner still wins.',
+    setup: 'Three candidates, A, B and C. Each voter ranks all three. Count first choices; if someone has more than half, they win. If not, the candidate with the fewest first choices is out, and their voters go to their second choice. Then whoever has more wins. Set how many voters cast each ballot, then let some of them move A to the top.',
+    maxPerRow: 30,
+    goal: 'Make A win, then lose after some voters move A to the top. No ties allowed.',
+    bonus: { goal: 'the fewest voters that work', done: 'No electorate of 16 voters or fewer does it without a tie (checked by trying every one, and every way of ranking A higher).', smallest: 17 },
+    hint: 'A\'s extra first choices come from someone else\'s pile, and that can change who goes out first. Who would A rather face in the final count?',
+    why: 'A beats one rival head to head but loses to the other, so A needs the right opponent in the final. Moving A up takes first choices away from that opponent, who now drops out first instead, and the other rival meets A in the final and wins. With three candidates every counterexample works this way. This is the non-monotonicity of instant-runoff voting, known since the 1970s, and it needs no exotic ballots: 17 voters are enough, and no smaller electorate does it without a tie. It shows up in real ballots too: the standard example is the 2009 mayoral race in Burlington, Vermont, where more first-place support for the winner would have cost him the race.',
+  },
+  {
     id: 'belady', kind: 'fifo', title: 'More memory',
     claim: 'Give a cache more room and it will miss less often, or at worst just as often.',
     setup: 'Two FIFO caches (first in, first out) run the same list of requests, pages A–E. One has 3 slots, the other 4.',

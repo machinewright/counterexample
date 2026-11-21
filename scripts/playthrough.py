@@ -23,6 +23,7 @@ STEPS = [
     lambda pg: clicks(pg, [0, 4, 1, 5, 2, 6, 3, 7]),
     lambda pg: weights(pg, 'A→B', 4),
     lambda pg: [pg.locator('svg.tour .pt').nth(y * 6 + x).click() for x, y in [(3, 4), (0, 0), (3, 2), (1, 4), (5, 4)]],
+    lambda pg: [num(pg, k, v) for k, v in [('#vACB', 6), ('#vBCA', 6), ('#vCAB', 3), ('#vCBA', 2), ('#mBCA', 2)]],
     lambda pg: typed(pg, 'abcdabeabcde'),
     lambda pg: meetings(pg, [[0, 2], [1, 2], [0, 3], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7], [6, 7], [5, 8]]),
 ]
@@ -40,5 +41,6 @@ with sync_playwright() as p:
             ok = 'Claim broken' in v
             if not ok: bad += 1
             print(w, i + 1, 'OK' if ok else 'NOT BROKEN', '★★' if '★★' in v else '')
+        pg.locator('#levels button').nth(10).click(); [num(pg, k, v) for k, v in [('#vACB', 6), ('#vBCA', 6), ('#vCAB', 3), ('#vCBA', 2), ('#mBCA', 2)]]; pg.screenshot(path=f'/home/claude/work/tmp/ce-runoff-{w}.png', full_page=True)
         print(w, 'errors', errs); bad += len(errs)
 sys.exit(1 if bad else 0)

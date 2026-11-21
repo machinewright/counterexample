@@ -118,3 +118,32 @@ test('nearest first: the worst ratio on the 6x6 map with 5 cities is the bonus v
   assert.ok(Math.abs(worst - lv.bonus.worst) < 1e-4, String(worst));
   assert.ok(reach > 0);
 });
+
+test('runoff: 17 voters is the smallest monotonicity failure (no ties)', async () => {
+  const { runoff } = await import('../src/algo.js');
+  const lv = LEVELS.find(l => l.id === 'runoff');
+  const R = ['ABC', 'ACB', 'BAC', 'BCA', 'CAB', 'CBA'];
+  const top = r => 'A' + r.replace('A', '');
+  // the example from the "why" text
+  const before = { ABC: 0, ACB: 6, BAC: 0, BCA: 6, CAB: 3, CBA: 2 };
+  assert.equal(runoff(before).winner, 'A');
+  assert.equal(runoff({ ...before, BCA: 4, ABC: 2 }).winner, 'C');
+  // exhaustive: every electorate up to 17, every way of moving some voters' A to the top
+  const comps = function* (n, k) { if (k === 1) { yield [n]; return; } for (let i = 0; i <= n; i++) for (const r of comps(n - i, k - 1)) yield [i, ...r]; };
+  const fails = n => {
+    for (const c of comps(n, 6)) {
+      const v = Object.fromEntries(R.map((r, i) => [r, c[i]]));
+      if (runoff(v).winner !== 'A') continue;
+      const rows = R.filter(r => r[0] !== 'A');
+      const rec = (i, a) => {
+        if (i === rows.length) { const w = runoff(a).winner; return w && w !== 'A' && JSON.stringify(a) !== JSON.stringify(v); }
+        for (let k = 0; k <= v[rows[i]]; k++) { const b = { ...a }; b[rows[i]] -= k; b[top(rows[i])] += k; if (rec(i + 1, b)) return true; }
+        return false;
+      };
+      if (rec(0, v)) return true;
+    }
+    return false;
+  };
+  for (let n = 1; n < lv.bonus.smallest; n++) assert.equal(fails(n), false, `n=${n}`);
+  assert.equal(fails(lv.bonus.smallest), true);
+});
