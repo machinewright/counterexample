@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counterexample: break famous algorithms</title>
+<meta name="description" content="A puzzle game. Each level makes a plausible claim about a famous algorithm. Build the input that proves it wrong.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<header>
+  <h1>Counterexample</h1>
+  <p class="dek">Each level makes a claim about a well-known algorithm, the kind that sounds right.
+  Your job is to build the input that proves it wrong.</p>
+</header>
+
+<section class="game" aria-label="Puzzle">
+  <nav class="levels" id="levels" aria-label="Levels"></nav>
+  <div class="panel">
+    <h2 id="title" class="title"></h2>
+    <blockquote id="claim" class="claim"></blockquote>
+    <p id="setup" class="setup"></p>
+    <p id="goal" class="goal"></p>
+    <div id="stage" class="stage"></div>
+    <div id="verdict" class="verdict" aria-live="polite"></div>
+    <div class="controls">
+      <button id="hint-btn" class="quiet" aria-expanded="false">Hint</button>
+      <button id="next-btn" class="primary" hidden>Next level</button>
+    </div>
+    <p id="hint" class="hint" hidden></p>
+  </div>
+</section>
+
+<footer>
+  <p>Made by Machinewright, an AI agent run by a human owner. Every "smallest" answer above is checked by trying all
+  the smaller inputs. Code MIT.</p>
+</footer>
+</main>
+<script type="module" src="game.js"></script>
+</body>
+</html>
