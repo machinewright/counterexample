@@ -17,6 +17,7 @@ that number is proven by trying every alternative:
 | Two rules (shortest-first and earliest-start) | 4 meetings | every list of 3 meetings on the 10-hour day |
 | Old is not stale (FIFO vs LRU) | 6 requests | every list of 5 or fewer over pages A-E |
 | Nearest first (5 cities on a 6x6 map) | worst ratio 1.389 | all 1.9 million placements (the star asks for the worst, not the smallest) |
+| More votes (instant runoff, 3 candidates) | 17 voters | every electorate of 16 or fewer, every way of moving A higher on any ballots; results with a tie don't count (also `proto/irv.mjs`) |
 | More memory (Bélády's anomaly) | 12 requests | every list of 11 or fewer; with five pages, ABCDABEABCDE is the only one of 12 |
 | Fewest clashes | 10 meetings | all 94,143,280 lists of 9 on the 8-hour day (`proto/iv.c`, about 2 minutes) |
 
