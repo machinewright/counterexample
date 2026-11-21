@@ -1,5 +1,9 @@
-import { fifoTrace } from '../algo.js';
+import { cacheTrace } from '../algo.js';
 
+const LABEL = { fifo: 'first in, first out', lru: 'least recently used' };
+const SHORT = { fifo: 'FIFO', lru: 'LRU' };
+
+/** Two caches run the same request list; the player makes caches[1] miss more than caches[0]. */
 export function mountFifo(el, lv, report) {
   el.innerHTML = `
     <div class="typer">
@@ -10,7 +14,8 @@ export function mountFifo(el, lv, report) {
       ${[...lv.pages].map(p => `<button class="page" data-p="${p}">${p}</button>`).join('')}
       <button id="back" aria-label="Remove last request">⌫</button><button id="clear">Clear</button>
     </div>
-    <div class="trace" id="trace"></div>
+    <div class="trace" id="trace" tabindex="-1"></div>
+    <p class="muted scroll-cue" id="cue" hidden>The list is wider than the screen: scroll it sideways →</p>
     <div class="totals" id="tot" aria-live="polite"></div>`;
   const inp = el.querySelector('#seq');
   const clean = () => { const v = inp.value.toUpperCase().replace(new RegExp(`[^${lv.pages}]`, 'g'), '').slice(0, lv.maxLen); if (v !== inp.value) inp.value = v; return v; };
@@ -18,12 +23,13 @@ export function mountFifo(el, lv, report) {
   el.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => { inp.value = clean() + b.dataset.p; show(); }));
   el.querySelector('#back').addEventListener('click', () => { inp.value = clean().slice(0, -1); show(); });
   el.querySelector('#clear').addEventListener('click', () => { inp.value = ''; show(); });
+  const name = c => lv.caches.every(x => x.policy === c.policy) ? `${c.k} slots` : `${c.k} slots, ${SHORT[c.policy]}`;
 
-  function block(seq, k) {
-    const steps = fifoTrace(seq, k);
+  function block(seq, c) {
+    const steps = cacheTrace(seq, c.k, c.policy);
     let rows = '';
-    for (let r = 0; r < k; r++) {
-      rows += `<tr><th>${r === 0 ? `${k} slots` : ''}</th>` + steps.map(s => {
+    for (let r = 0; r < c.k; r++) {
+      rows += `<tr><th>${r === 0 ? name(c) : ''}</th>` + steps.map(s => {
         const p = s.mem[r];
         return p === undefined ? '<td class="empty"></td>' : `<td class="${s.fault && p === s.page ? 'new' : ''}">${p}</td>`;
       }).join('') + '</tr>';
@@ -33,14 +39,18 @@ export function mountFifo(el, lv, report) {
   }
   function show() {
     const seq = [...clean()];
-    const a = block(seq, lv.small), b = block(seq, lv.large);
-    el.querySelector('#trace').innerHTML = seq.length ? `<table aria-hidden="true">
+    const [a, b] = lv.caches.map(c => block(seq, c));
+    const tr = el.querySelector('#trace');
+    tr.innerHTML = seq.length ? `<table aria-hidden="true">
       <tr><th>request</th>${seq.map(p => `<td class="req">${p}</td>`).join('')}</tr>
-      <tr class="gap"><th></th></tr>${a.rows}<tr class="gap"><th></th></tr>${b.rows}</table>` : '<p class="muted">Each cache\'s contents will show here, oldest page on top.</p>';
-    el.querySelector('#tot').innerHTML = `<span>${lv.small} slots: ${a.misses} misses</span><span>${lv.large} slots: ${b.misses} misses</span>`;
+      <tr class="gap"><th></th></tr>${a.rows}<tr class="gap"><th></th></tr>${b.rows}</table>`
+      : `<p class="muted">Each cache's contents will show here, the page it will throw out next on top.</p>`;
+    el.querySelector('#cue').hidden = tr.scrollWidth <= tr.clientWidth + 1;
+    el.querySelector('#tot').innerHTML = lv.caches.map((c, i) => `<span>${name(c)}: ${[a, b][i].misses} misses</span>`).join('');
     const broken = b.misses > a.misses;
     report({ broken, bonus: broken && seq.length === lv.bonus.smallest,
-      note: broken ? '' : seq.length >= 6 && a.misses === b.misses ? 'Tied so far. The bigger cache has to fall behind.' : '' });
+      note: broken ? '' : seq.length >= 6 && a.misses === b.misses ? `Tied so far. The ${name(lv.caches[1])} cache has to fall behind.` : '' });
   }
   show();
 }
+export { LABEL };

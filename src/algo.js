@@ -79,3 +79,51 @@ export function adjacency(n, edges) {
   for (const [a, b] of edges) { adj[a].push(b); adj[b].push(a); }
   return adj;
 }
+
+/** Page cache with k frames and a replacement policy ('fifo' or 'lru'). Same step format as fifoTrace;
+ *  `mem` is listed in eviction order (next to go first). */
+export function cacheTrace(seq, k, policy) {
+  if (policy === 'fifo') return fifoTrace(seq, k);
+  const mem = [], steps = [];
+  for (const page of seq) {
+    let fault = false, evicted = null;
+    const at = mem.indexOf(page);
+    if (at >= 0) mem.splice(at, 1); else { fault = true; if (mem.length === k) evicted = mem.shift(); }
+    mem.push(page);
+    steps.push({ page, fault, mem: [...mem], evicted });
+  }
+  return steps;
+}
+export const misses = (seq, k, policy) => cacheTrace(seq, k, policy).filter(s => s.fault).length;
+
+// Meetings: intervals [start, end) in whole hours. Greedy rules pick the smallest key; ties go to the one that ends
+// first, then the one that starts first.
+const overlap = (a, b) => a[0] < b[1] && b[0] < a[1];
+export const MEETING_RULES = {
+  shortest: { name: 'shortest first', short: 'short', key: (I, i) => I[i][1] - I[i][0] },
+  start: { name: 'earliest start first', short: 'early', key: (I, i) => I[i][0] },
+  conflicts: { name: 'fewest clashes first', short: 'clash', key: (I, i, alive) => I.reduce((c, x, j) => c + (j !== i && alive[j] && overlap(I[i], x) ? 1 : 0), 0) },
+};
+/** Indices of the meetings a greedy rule books, in booking order. */
+export function greedyMeetings(I, rule) {
+  const alive = I.map(() => true), out = [], key = MEETING_RULES[rule].key;
+  for (;;) {
+    let b = -1, bk;
+    I.forEach((x, i) => {
+      if (!alive[i]) return;
+      const k = [key(I, i, alive), x[1], x[0]];
+      if (b < 0 || k[0] < bk[0] || (k[0] === bk[0] && (k[1] < bk[1] || (k[1] === bk[1] && k[2] < bk[2])))) { b = i; bk = k; }
+    });
+    if (b < 0) return out;
+    out.push(b);
+    const pb = I[b];
+    I.forEach((x, j) => { if (j === b || overlap(pb, x)) alive[j] = false; });
+  }
+}
+/** A largest set of non-clashing meetings (earliest end first, which is optimal). Indices. */
+export function bestMeetings(I) {
+  const idx = I.map((_, i) => i).sort((a, b) => I[a][1] - I[b][1] || I[a][0] - I[b][0]);
+  const out = []; let end = -Infinity;
+  for (const i of idx) if (I[i][0] >= end) { out.push(i); end = I[i][1]; }
+  return out;
+}
