@@ -147,3 +147,25 @@ test('runoff: 17 voters is the smallest monotonicity failure (no ties)', async (
   for (let n = 1; n < lv.bonus.smallest; n++) assert.equal(fails(n), false, `n=${n}`);
   assert.equal(fails(lv.bonus.smallest), true);
 });
+
+test('noshow: 11 voters (newcomers included) is the smallest no-show failure (no ties)', async () => {
+  const { runoff } = await import('../src/algo.js');
+  const lv = LEVELS.find(l => l.id === 'noshow');
+  assert.equal(lv.bonus.smallest, 11);
+  const before = { ABC: 0, ACB: 3, BAC: 2, BCA: 0, CAB: 0, CBA: 4 };
+  assert.equal(runoff(before).winner, 'A');
+  assert.equal(runoff({ ...before, BAC: 4 }).winner, 'C'); // two B>A>C voters join: A -> C
+  const R = Object.keys(before);
+  function* comps(n, k) { if (k === 1) { yield [n]; return; } for (let i = 0; i <= n; i++) for (const t of comps(n - i, k - 1)) yield [i, ...t]; }
+  function* subs(c, i = 0) { if (i === c.length) { yield []; return; } for (let k = 0; k <= c[i]; k++) for (const t of subs(c, i + 1)) yield [k, ...t]; }
+  const obj = a => Object.fromEntries(R.map((r, i) => [r, a[i]]));
+  for (let T = 1; T < 11; T++) for (const after of comps(T, 6)) {
+    const w2 = runoff(obj(after)).winner; if (!w2) continue;
+    for (const j of subs(after)) {
+      if (!j.some(Boolean)) continue;
+      const w1 = runoff(obj(after.map((x, i) => x - j[i]))).winner;
+      if (!w1 || w1 === w2) continue;
+      assert.ok(!j.every((k, i) => !k || R[i].indexOf(w1) < R[i].indexOf(w2)), `failure with ${T} voters`);
+    }
+  }
+});

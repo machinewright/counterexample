@@ -4,8 +4,10 @@ const RANKS = ['ABC', 'ACB', 'BAC', 'BCA', 'CAB', 'CBA'];
 const chip = c => `<span class="cand k${c}">${c}</span>`;
 const say = r => [...r].join(' then ');
 
-/** Instant runoff, three candidates. The player sets the ballots, then has some voters move A to the top. */
+/** Instant runoff, three candidates. The player sets the ballots, then either has some voters move A to the top
+ *  (default) or, with lv.mode === 'join', adds new voters who all prefer the old winner to the new one. */
 export function mountRunoff(el, lv, report) {
+  const join = lv.mode === 'join';
   const votes = Object.fromEntries(RANKS.map(r => [r, 0])), moved = Object.fromEntries(RANKS.map(r => [r, 0]));
   const step = (id, label) => `<span class="mini">
       <button data-id="${id}" data-d="-1" aria-label="${label}: one fewer">−</button>
@@ -13,10 +15,10 @@ export function mountRunoff(el, lv, report) {
       <button data-id="${id}" data-d="1" aria-label="${label}: one more">+</button></span>`;
   el.innerHTML = `
     <table class="ballots">
-      <thead><tr><th>Ballot (1st, 2nd, 3rd)</th><th>Voters</th><th>Of them, move A to the top</th></tr></thead>
+      <thead><tr><th>Ballot (1st, 2nd, 3rd)</th><th>Voters</th><th>${join ? 'New voters who join' : 'Of them, move A to the top'}</th></tr></thead>
       <tbody>${RANKS.map(r => `<tr><td><span class="visually-hidden">${say(r)}</span><span aria-hidden="true">${[...r].map(chip).join('<span class="gt">›</span>')}</span></td>
         <td>${step('v' + r, `Voters ranking ${say(r)}`)}</td>
-        <td>${r[0] === 'A' ? '<span class="muted">A is already first</span>' : step('m' + r, `Voters ranking ${say(r)} who move A to the top`)}</td></tr>`).join('')}</tbody>
+        <td>${join ? step('m' + r, `New voters ranking ${say(r)}`) : r[0] === 'A' ? '<span class="muted">A is already first</span>' : step('m' + r, `Voters ranking ${say(r)} who move A to the top`)}</td></tr>`).join('')}</tbody>
     </table>
     <div class="counts" aria-live="polite"><div id="before"></div><div id="after"></div></div>`;
   const clamp = (v, hi) => { v = Math.round(+v); return !(v >= 0) ? 0 : Math.min(v, hi); };
@@ -24,7 +26,8 @@ export function mountRunoff(el, lv, report) {
     for (const r of RANKS) {
       const v = el.querySelector('#v' + r); votes[r] = clamp(v.value, lv.maxPerRow);
       const m = el.querySelector('#m' + r);
-      if (m) { m.max = votes[r]; moved[r] = clamp(m.value, votes[r]); if (+m.value !== moved[r] && m.value !== '') m.value = moved[r]; }
+      if (m && join) moved[r] = clamp(m.value, lv.maxPerRow);
+      else if (m) { m.max = votes[r]; moved[r] = clamp(m.value, votes[r]); if (+m.value !== moved[r] && m.value !== '') m.value = moved[r]; }
     }
   };
   el.querySelectorAll('input').forEach(i => i.addEventListener('input', show));
@@ -43,10 +46,11 @@ export function mountRunoff(el, lv, report) {
   function show() {
     read();
     const after = { ...votes };
-    for (const r of RANKS) if (moved[r]) { after[r] -= moved[r]; after['A' + r.replace('A', '')] += moved[r]; }
+    for (const r of RANKS) if (join) after[r] += moved[r]; else if (moved[r]) { after[r] -= moved[r]; after['A' + r.replace('A', '')] += moved[r]; }
     const n = RANKS.reduce((s, r) => s + votes[r], 0), m = RANKS.reduce((s, r) => s + moved[r], 0);
     const b = runoff(votes), a = runoff(after);
     el.querySelector('#before').innerHTML = block('Before', b, n);
+    if (join) return showJoin(b, a, n, m);
     el.querySelector('#after').innerHTML = block(m ? `After ${m} voter${m === 1 ? '' : 's'} move A to the top` : 'After (nobody has moved yet)', a, n);
     const broken = b.winner === 'A' && m > 0 && a.winner && a.winner !== 'A';
     let note = '';
@@ -56,6 +60,23 @@ export function mountRunoff(el, lv, report) {
       else if (b.winner === 'A' && a.winner === 'A') note = 'A still wins with the extra support.';
     }
     report({ broken, bonus: broken && n === lv.bonus.smallest, input: { votes, moved }, note });
+  }
+  function showJoin(b, a, n, m) {
+    el.querySelector('#after').innerHTML = block(m ? `After ${m} new voter${m === 1 ? '' : 's'} join` : 'After (nobody has joined yet)', a, n + m);
+    const w = b.winner, x = a.winner;
+    // A joiner is hurt by showing up when they rank the old winner above the new one.
+    const hurt = r => r.indexOf(w) < r.indexOf(x);
+    const bad = RANKS.filter(r => moved[r] && !hurt(r));
+    const broken = !!(w && x && x !== w && m > 0 && !bad.length);
+    let note = '';
+    if (!broken && n) {
+      if (!w) note = 'The first election needs a clear winner.';
+      else if (!m) note = `${w} wins. Now add some new voters.`;
+      else if (!x) note = '';
+      else if (x === w) note = `${w} still wins.`;
+      else note = `The winner changed from ${w} to ${x}, but not every newcomer ranks ${w} above ${x}: ${bad.map(say).join('; ')}. Those voters got what they wanted.`;
+    }
+    report({ broken, bonus: broken && n + m === lv.bonus.smallest, input: { votes, joined: { ...moved } }, note });
   }
   show();
 }

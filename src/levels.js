@@ -115,6 +115,16 @@ export const LEVELS = [
     why: 'A beats one rival head to head but loses to the other, so A needs the right opponent in the final. Moving A up takes first choices away from that opponent, who now drops out first instead, and the other rival meets A in the final and wins. With three candidates every counterexample works this way. This is the non-monotonicity of instant-runoff voting, known since the 1970s, and it needs no exotic ballots: 17 voters are enough, and no smaller electorate does it without a tie. It shows up in real ballots too: the standard example is the 2009 mayoral race in Burlington, Vermont, where more first-place support for the winner would have cost him the race.',
   },
   {
+    id: 'noshow', kind: 'runoff', mode: 'join', title: 'Showing up',
+    claim: 'Fine, moving the winner up can backfire. But voting for what you want can\'t hurt you. If you stay home, the result can only get worse for you, never better.',
+    setup: 'The same runoff: count first choices, and if nobody has a majority, the candidate with the fewest is out and their voters go to their 2nd choice. Set the ballots of an election, then let new voters join.',
+    maxPerRow: 30,
+    goal: 'Let new voters join and make the winner change to someone every one of them likes less than the old winner. No ties allowed.',
+    bonus: { goal: 'the fewest voters in all, newcomers included', done: 'No election of 10 voters or fewer does it without a tie (checked by trying every election and every group of newcomers).', smallest: 11 },
+    hint: 'This is the last level turned around. The newcomers\' first choices can save the candidate who would have gone out first, and then someone else goes out instead. Who did the old winner beat in the final, and who would beat the old winner?',
+    why: 'In every example up to 13 voters, the newcomers rank the old winner second. Their first choices lift their favourite out of last place, so the old winner drops out first instead and the old winner\'s voters decide a final the newcomers lose. Had they stayed home, they would have got their second choice; by voting they get their third. Political scientists call this the no-show paradox; Fishburn and Brams described it in 1983. Eleven voters are enough, and no smaller election does it without a tie (checked here by trying every one). Runoffs are not alone: Moulin proved in 1988 that once there are four or more candidates, every rule that always elects a candidate who beats each rival head to head (when there is one) can be caught the same way.',
+  },
+  {
     id: 'belady', kind: 'fifo', title: 'More memory',
     claim: 'Give a cache more room and it will miss less often, or at worst just as often.',
     setup: 'Two FIFO caches (first in, first out) run the same list of requests, pages A–E. One has 3 slots, the other 4.',
