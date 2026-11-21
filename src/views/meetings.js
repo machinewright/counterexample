@@ -67,7 +67,7 @@ export function mountMeetings(el, lv, report) {
     tl.style.gridTemplateColumns = `minmax(0, 1fr) repeat(${n}, ${narrow ? 30 : 40}px) ${narrow ? 28 : 34}px`;
     tl.style.setProperty('--hours', T);
     tl.innerHTML = `<div class="ticks" aria-hidden="true">${ticks}</div>${blanks(n + 1)}
-      <span></span>${showC ? '<span class="mk head">clashes</span>' : ''}${lv.rules.map(r => `<span class="mk head">${MEETING_RULES[r].short}</span>`).join('')}<span class="mk head best">best</span><span></span>` +
+      <span></span>${showC ? '<span class="mk head">clashes</span>' : ''}${lv.rules.map(r => `<span class="mk head">${lv.rules.length === 1 ? 'order' : MEETING_RULES[r].short}</span>`).join('')}<span class="mk head best">best</span><span></span>` +
       I.map((m, i) => `<div class="track"><div class="bar" style="left:${m[0] / T * 100}%;width:${(m[1] - m[0]) / T * 100}%">${H0 + m[0]}–${H0 + m[1]}</div></div>
         ${showC ? `<span class="mk cnt" aria-label="clashes with ${clashes(i)}">${clashes(i)}</span>` : ''}${marks(i)}<button class="x" data-i="${i}" aria-label="Remove meeting ${H0 + m[0]}:00 to ${H0 + m[1]}:00">×</button>`).join('') +
       `<div class="track new"><div class="bar" hidden></div><span class="muted">${I.length >= lv.maxMeetings ? 'full' : (narrow ? 'drag to add' : 'drag here to add a meeting')}</span></div>${blanks(n + 1)}`;
