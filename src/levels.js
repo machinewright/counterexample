@@ -110,7 +110,7 @@ export const LEVELS = [
     setup: 'Same room, a workday from 9 to 17; touching meetings don\'t clash, and no duplicates. The rule counts how many of the remaining requests each one clashes with, books the one with the fewest, drops its clashes, and counts again (ties go to the one that ends first, then the one that starts first).',
     rules: ['conflicts'], hours: 8, firstHour: 9, maxMeetings: 12,
     goal: 'Make fewest-clashes book fewer meetings than the room could hold.',
-    bonus: { goal: 'the fewest meetings that work', done: 'No list of nine meetings or fewer on this day does it (checked by trying all 94 million lists of nine).', smallest: 10 },
+    bonus: { goal: 'the fewest meetings that work', done: 'No list of nine meetings or fewer on this day does it (checked by trying every one; there are 94 million lists of nine alone).', smallest: 10 },
     hint: 'Plan the best schedule first: four meetings back to back. The rule should be tempted by one quiet meeting across the boundary between two of them. So make the four look busy: stack extra requests on them, but none on the quiet one.',
     why: 'A clash count is a local signal. A meeting can look quiet while it sits exactly on the boundary between two meetings the best schedule needs; crowd those two with extra requests and the rule takes the quiet one. On this day it takes ten requests to set the trap, and no smaller list works. Booking whatever ends first, from level 3, still gets the best schedule every time.',
   },
