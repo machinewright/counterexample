@@ -12,7 +12,7 @@ export function mountPaths(el, lv, report) {
     <div class="weights" id="wts"></div>
     <div id="pres" class="mres" aria-live="polite"></div>`;
   const svg = el.querySelector('svg');
-  const P = lv.pos.map(([x, y]) => [x * W, y * H]);
+  const P = lv.pos.map(([x, y]) => [16 + x * (W - 32), 16 + y * (H - 32)]);
   const R = 22;
   const geo = lv.edges.map(([a, b]) => {
     const [x1, y1] = P[a], [x2, y2] = P[b], d = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / d, uy = (y2 - y1) / d;

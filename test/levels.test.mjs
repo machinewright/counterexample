@@ -102,3 +102,19 @@ test('a new coin: 8 is the smallest amount any added coin breaks; the safe coins
   assert.deepEqual(greedyChange([1, 5, 10, 20, 25], 40), [25, 10, 5]);
   assert.deepEqual(fewestChange([1, 4, 5, 10, 25], 8), [4, 4]);
 });
+
+test('nearest first: the worst ratio on the 6x6 map with 5 cities is the bonus value', async () => {
+  const { nearestTour, bestTour } = await import('../src/algo.js');
+  const lv = L('tour'), G = lv.grid, pts = [];
+  for (let y = 0; y < G; y++) for (let x = 0; x < G; x++) pts.push([x, y]);
+  let worst = 0, reach = 0;
+  for (let h = 0; h < pts.length; h++) {
+    const c = [pts[h]];
+    (function rec(from) {
+      if (c.length === lv.cities) { const r = nearestTour(c).length / bestTour(c).length; if (r > worst) worst = r; if (r >= lv.target) reach++; return; }
+      for (let i = from; i < pts.length; i++) if (i !== h) { c.push(pts[i]); rec(i + 1); c.pop(); }
+    })(0);
+  }
+  assert.ok(Math.abs(worst - lv.bonus.worst) < 1e-4, String(worst));
+  assert.ok(reach > 0);
+});

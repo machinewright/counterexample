@@ -152,3 +152,32 @@ export function bellmanFord(n, edges, src) {
   return { dist, prev };
 }
 export function pathTo(prev, t) { const p = []; for (let v = t; v >= 0; v = prev[v]) p.unshift(v); return p; }
+
+// Tours through cities on a grid; a city is [x, y]; tours start and end at cities[0] (home).
+const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+const tourLength = (C, order) => order.reduce((L, v, i) => L + dist(C[v], C[order[(i + 1) % order.length]]), 0);
+/** Nearest neighbour from home: always go to the nearest unvisited city; ties go to the one nearer the top
+ *  (smaller y), then nearer the left (smaller x). Returns { order, length }. */
+export function nearestTour(C) {
+  const order = [0], left = C.map((_, i) => i).slice(1);
+  while (left.length) {
+    const cur = C[order.at(-1)];
+    let bi = 0;
+    for (let i = 1; i < left.length; i++) {
+      const a = C[left[i]], b = C[left[bi]], da = dist(cur, a), db = dist(cur, b);
+      if (da < db - 1e-9 || (Math.abs(da - db) < 1e-9 && (a[1] < b[1] || (a[1] === b[1] && a[0] < b[0])))) bi = i;
+    }
+    order.push(left.splice(bi, 1)[0]);
+  }
+  return { order, length: tourLength(C, order) };
+}
+/** Shortest tour from home, by trying every order (fine for up to ~8 cities). */
+export function bestTour(C) {
+  const rest = C.map((_, i) => i).slice(1);
+  let best = { order: [0, ...rest], length: tourLength(C, [0, ...rest]) };
+  (function perm(k) {
+    if (k === rest.length) { const L = tourLength(C, [0, ...rest]); if (L < best.length - 1e-9) best = { order: [0, ...rest], length: L }; return; }
+    for (let i = k; i < rest.length; i++) { [rest[k], rest[i]] = [rest[i], rest[k]]; perm(k + 1); [rest[k], rest[i]] = [rest[i], rest[k]]; }
+  })(0);
+  return best;
+}

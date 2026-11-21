@@ -95,6 +95,16 @@ export const LEVELS = [
     why: 'Adding a constant to every edge charges each path once per edge, so paths with more edges get pushed up more and the ranking changes. The idea can be rescued, though: Johnson\'s algorithm gives each point its own adjustment, worked out with Bellman-Ford, so that every path between the same two points changes by the same amount.',
   },
   {
+    id: 'tour', kind: 'tour', title: 'Nearest first',
+    claim: 'To visit every city and come home, always drive to the nearest city you haven\'t visited. It\'s never far off the shortest round trip.',
+    setup: 'Click points to place five cities; the first one is home (H). The salesman starts at home, always goes to the nearest unvisited city (if two are equally near, the one nearer the top, then the left) and finally drives home. Orange is his route, numbered; the green band is the shortest round trip.',
+    grid: 6, cities: 5, target: 1.25,
+    goal: 'Make his route at least 1.25 times as long as the shortest round trip.',
+    bonus: { goal: 'the worst it can do on this map, 1.389 times', done: 'Nothing on this map does worse (checked over all 1.9 million ways to place five cities).', worst: 1.3898 },
+    hint: 'Nearest-first never looks ahead. Put cities close together on one side so they lure him away, and leave one city alone on the far side: he will visit it last and pay for the trip there and back.',
+    why: 'Each step is the cheapest one, but the route as a whole isn\'t: the city that is never nearest gets left until the end, and the final legs are long. With more cities it can get worse without limit, even on a flat map: the factor can grow with the logarithm of the number of cities, and no faster (Rosenkrantz, Stearns and Lewis proved the limit in 1977; Hougardy and Wilde built flat maps that reach it in 2014).',
+  },
+  {
     id: 'belady', kind: 'fifo', title: 'More memory',
     claim: 'Give a cache more room and it will miss less often, or at worst just as often.',
     setup: 'Two FIFO caches (first in, first out) run the same list of requests, pages A–E. One has 3 slots, the other 4.',

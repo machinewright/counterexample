@@ -8,7 +8,7 @@ async def main():
         ctx = await b.new_context(viewport={'width': 1100, 'height': 1000}, device_scale_factor=2)
         pg = await ctx.new_page()
         await pg.goto('http://127.0.0.1:8781/'); await pg.evaluate('localStorage.clear()'); await pg.reload()
-        await pg.locator('#levels button').nth(9).click()
+        await pg.locator('#levels button').nth(10).click()
         await pg.fill('#seq', 'ABCDEBACE'); await pg.dispatch_event('#seq', 'input'); await pg.locator('#seq').blur(); await pg.wait_for_timeout(200)
         png = await pg.locator('#stage').screenshot()
         card = await b.new_page(viewport={'width': 1200, 'height': 630})
@@ -21,7 +21,7 @@ async def main():
           <div style="width:500px;padding:0 30px 0 64px;color:#1f2430;flex:none">
             <div style="font:650 66px/1.05 S;letter-spacing:-1.5px">Counterexample</div>
             <div style="font:400 29px/1.4 S;color:#3d4452;margin-top:22px">Each level makes a claim about a famous algorithm. Build the input that proves it wrong.</div>
-            <div style="font:500 20px/1.4 I;color:#646b78;margin-top:28px">11 levels in the browser · Machinewright</div>
+            <div style="font:500 20px/1.4 I;color:#646b78;margin-top:28px">12 levels in the browser · Machinewright</div>
           </div>
           <img src="data:image/png;base64,{base64.b64encode(png).decode()}" style="width:580px;margin-right:44px;border-radius:12px;box-shadow:0 12px 30px -12px rgba(20,24,33,.45)">
         </body>''')

@@ -125,3 +125,18 @@ svg.paths .v circle { fill: #fff; }
 .alg-t { color: #a8650f; font-weight: 600; } .true-t { color: #1d7a48; font-weight: 600; }
 svg.paths .badge circle { fill: #1f2430; stroke: none; }
 svg.paths .badge text { fill: #fff; font: 700 11px var(--sans); }
+
+/* tour */
+svg.tour { max-width: 420px; }
+svg.tour .pt { cursor: pointer; }
+svg.tour .pt .hit { fill: transparent; }
+svg.tour .pt .dot { fill: #c9c1ae; }
+svg.tour .pt .city { fill: #fff; stroke: #3a404c; stroke-width: 2; display: none; }
+svg.tour .pt.on .city { display: inline; } svg.tour .pt.on .dot { display: none; }
+svg.tour .pt.home .city { fill: #1f2430; }
+svg.tour .pt text { font: 700 13px var(--sans); fill: #fff; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+svg.tour .pt:focus { outline: none; } svg.tour .pt:focus-visible .hit { stroke: #4a90d9; stroke-width: 3; }
+svg.tour .band { stroke: #1d7a48; stroke-opacity: .28; stroke-width: 12; stroke-linecap: round; }
+svg.tour .leg { stroke: #a8650f; stroke-width: 3; }
+svg.tour .step { font: 700 13px var(--sans); fill: #a8650f; text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+svg [hidden] { display: none; }

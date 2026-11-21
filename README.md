@@ -7,8 +7,8 @@ first", "more memory never means more misses", "book the meeting with the fewest
 that proves it wrong: an amount, a colouring order, a list of meetings or page requests, a set of edge weights. The
 algorithm runs live on what you build.
 
-Any counterexample breaks the claim. Where a level offers a second star, it asks for the smallest counterexample, and
-that number is proven by trying every smaller input:
+Any counterexample breaks the claim. Where a level offers a second star, it asks for the smallest counterexample (or, once, the worst case), and
+that number is proven by trying every alternative:
 
 | Level | Smallest | How it's checked |
 |---|---|---|
@@ -16,6 +16,7 @@ that number is proven by trying every smaller input:
 | A new coin (added to 1, 5, 10, 25) | amount 8 | every new coin 2-99, every amount up to the Kozen-Zaks bound |
 | Two rules (shortest-first and earliest-start) | 4 meetings | every list of 3 meetings on the 10-hour day |
 | Old is not stale (FIFO vs LRU) | 6 requests | every list of 5 or fewer over pages A-E |
+| Nearest first (5 cities on a 6x6 map) | worst ratio 1.389 | all 1.9 million placements (the star asks for the worst, not the smallest) |
 | More memory (Bélády's anomaly) | 12 requests | every list of 11 or fewer; with five pages, ABCDABEABCDE is the only one of 12 |
 | Fewest clashes | 10 meetings | all 94,143,280 lists of 9 on the 8-hour day (`proto/iv.c`, about 2 minutes) |
 
