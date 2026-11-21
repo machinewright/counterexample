@@ -60,15 +60,15 @@ export function mountMeetings(el, lv, report) {
       const k = pick.indexOf(i);
       return `<span class="mk ${k >= 0 ? 'on' : ''}" title="${MEETING_RULES[r].name}">${k >= 0 ? k + 1 : '·'}</span>`;
     }).join('') + `<span class="mk best ${best.includes(i) ? 'on' : ''}">${best.includes(i) ? '✓' : '·'}</span>`;
+    const narrow = el.clientWidth < 460;
     const showC = lv.rules.includes('conflicts');
     const clashes = i => I.reduce((c, x, j) => c + (j !== i && x[0] < I[i][1] && I[i][0] < x[1] ? 1 : 0), 0);
     const n = lv.rules.length + 1 + (showC ? 1 : 0), blanks = k => '<span></span>'.repeat(k);
-    const narrow = el.clientWidth < 460;
     tl.style.gridTemplateColumns = `minmax(0, 1fr) repeat(${n}, ${narrow ? 30 : 40}px) ${narrow ? 28 : 34}px`;
     tl.style.setProperty('--hours', T);
     tl.innerHTML = `<div class="ticks" aria-hidden="true">${ticks}</div>${blanks(n + 1)}
-      <span></span>${showC ? '<span class="mk head">clashes</span>' : ''}${lv.rules.map(r => `<span class="mk head">${lv.rules.length === 1 ? 'order' : MEETING_RULES[r].short}</span>`).join('')}<span class="mk head best">best</span><span></span>` +
-      I.map((m, i) => `<div class="track"><div class="bar" style="left:${m[0] / T * 100}%;width:${(m[1] - m[0]) / T * 100}%">${H0 + m[0]}–${H0 + m[1]}</div></div>
+      <span></span>${showC ? `<span class="mk head">${narrow ? 'clash' : 'clashes'}</span>` : ''}${lv.rules.map(r => `<span class="mk head">${lv.rules.length === 1 ? (narrow ? 'pick' : 'order') : MEETING_RULES[r].short}</span>`).join('')}<span class="mk head best">best</span><span></span>` +
+      I.map((m, i) => `<div class="track"><div class="bar" style="left:${m[0] / T * 100}%;width:${(m[1] - m[0]) / T * 100}%">${narrow && m[1] - m[0] === 1 ? H0 + m[0] : `${H0 + m[0]}–${H0 + m[1]}`}</div></div>
         ${showC ? `<span class="mk cnt" aria-label="clashes with ${clashes(i)}">${clashes(i)}</span>` : ''}${marks(i)}<button class="x" data-i="${i}" aria-label="Remove meeting ${H0 + m[0]}:00 to ${H0 + m[1]}:00">×</button>`).join('') +
       `<div class="track new"><div class="bar" hidden></div><span class="muted">${I.length >= lv.maxMeetings ? 'full' : (narrow ? 'drag to add' : 'drag here to add a meeting')}</span></div>${blanks(n + 1)}`;
     tl.querySelectorAll('.x').forEach(b => b.addEventListener('click', () => { I.splice(+b.dataset.i, 1); draw(); }));

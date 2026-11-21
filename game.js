@@ -45,6 +45,7 @@ function verdict(lv, st) {
       : p.bonus ? '' : `<p class="star">★☆ For the second star: ${lv.bonus.goal}.</p>`;
     $('verdict').innerHTML = `<p class="broken">Claim broken.</p>${star}<p class="why">${lv.why}</p>`;
     $('next-btn').hidden = cur === LEVELS.length - 1;
+    if (cur === LEVELS.length - 1 && LEVELS.every(l => progress[l.id]?.won)) $('verdict').insertAdjacentHTML('beforeend', '<p class="star">That was the last level: every claim broken.</p>');
     if (firstWin) $('verdict').scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
   } else {
     $('verdict').innerHTML = st.note ? `<p class="muted">${st.note}</p>` : '';
