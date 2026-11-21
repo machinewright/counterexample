@@ -16,7 +16,7 @@ export function mountRunoff(el, lv, report) {
       <thead><tr><th>Ballot (1st, 2nd, 3rd)</th><th>Voters</th><th>Of them, move A to the top</th></tr></thead>
       <tbody>${RANKS.map(r => `<tr><td><span class="visually-hidden">${say(r)}</span><span aria-hidden="true">${[...r].map(chip).join('<span class="gt">›</span>')}</span></td>
         <td>${step('v' + r, `Voters ranking ${say(r)}`)}</td>
-        <td>${r[0] === 'A' ? '' : step('m' + r, `Voters ranking ${say(r)} who move A to the top`)}</td></tr>`).join('')}</tbody>
+        <td>${r[0] === 'A' ? '<span class="muted">A is already first</span>' : step('m' + r, `Voters ranking ${say(r)} who move A to the top`)}</td></tr>`).join('')}</tbody>
     </table>
     <div class="counts" aria-live="polite"><div id="before"></div><div id="after"></div></div>`;
   const clamp = (v, hi) => { v = Math.round(+v); return !(v >= 0) ? 0 : Math.min(v, hi); };
@@ -34,7 +34,7 @@ export function mountRunoff(el, lv, report) {
 
   function block(title, res, n) {
     const row = t => Object.entries(t).map(([c, k]) => `<div class="vbar"><span>${chip(c)}</span><span class="vfill k${c}" style="width:${n ? Math.round(100 * k / n) : 0}%"></span><span class="vnum">${k}</span></div>`).join('');
-    let h = `<h3>${title} <span class="muted">${n} voter${n === 1 ? '' : 's'}</span></h3><p class="muted rlabel">First choices</p>${row(res.rounds[0])}`;
+    let h = `<h3>${title} <span class="muted">${n} voter${n === 1 ? '' : 's'}</span></h3><p class="muted rlabel">First choices${n ? ` (a majority is ${Math.floor(n / 2) + 1})` : ''}</p>${row(res.rounds[0])}`;
     if (res.rounds[1]) h += `<p class="muted rlabel">${res.out} is out; ${res.out}'s voters go to their 2nd choice</p>${row(res.rounds[1])}`;
     h += !n ? '' : res.winner ? `<p class="win">${chip(res.winner)} wins${res.rounds[1] ? '' : ' with a majority'}</p>`
       : `<p class="bad">${res.tie === 'last' ? 'Tie for last place' : 'Tie in the final count'}: no clear result</p>`;
