@@ -87,3 +87,18 @@ test('fewest clashes: a 10-meeting trap; nothing up to 5 meetings works (9 is ch
   assert.ok(fooled(lv, I)); assert.equal(I.length, lv.bonus.smallest);
   for (let n = 1; n <= 5; n++) eachMeetingList(lv.hours, n, J => assert.ok(!fooled(lv, J)));
 });
+
+test('a new coin: 8 is the smallest amount any added coin breaks; the safe coins are safe', () => {
+  const lv = L('mint'); let min = Infinity; const safe = [];
+  for (let c = lv.newCoin.min; c <= lv.newCoin.max; c++) {
+    if (lv.coins.includes(c)) continue;
+    const coins = [...lv.coins, c]; let f = null;
+    // Kozen & Zaks: a smallest counterexample, if any, lies below the sum of the two largest coins (< 99 + 25)
+    for (let a = 1; a < 125; a++) if (greedyChange(coins, a).length > fewestChange(coins, a).length) { f = a; break; }
+    if (f === null) safe.push(c); else min = Math.min(min, f);
+  }
+  assert.equal(min, lv.bonus.smallest);
+  for (const c of [2, 3, 15, 40, 50]) assert.ok(safe.includes(c), c);
+  assert.deepEqual(greedyChange([1, 5, 10, 20, 25], 40), [25, 10, 5]);
+  assert.deepEqual(fewestChange([1, 4, 5, 10, 25], 8), [4, 4]);
+});

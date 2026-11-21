@@ -127,3 +127,28 @@ export function bestMeetings(I) {
   for (const i of idx) if (I[i][0] >= end) { out.push(i); end = I[i][1]; }
   return out;
 }
+
+// Shortest paths on a small directed graph: edges [from, to, weight], nodes 0..n-1.
+/** Textbook Dijkstra: each node is settled once, when it has the smallest tentative distance; settled nodes are
+ *  never updated again. Returns { dist, prev, order } (order = settling order). */
+export function dijkstra(n, edges, src) {
+  const dist = new Array(n).fill(Infinity), prev = new Array(n).fill(-1), done = new Array(n).fill(false), order = [];
+  dist[src] = 0;
+  for (;;) {
+    let u = -1;
+    for (let v = 0; v < n; v++) if (!done[v] && dist[v] < Infinity && (u < 0 || dist[v] < dist[u])) u = v;
+    if (u < 0) break;
+    done[u] = true; order.push(u);
+    for (const [a, b, w] of edges) if (a === u && !done[b] && dist[u] + w < dist[b]) { dist[b] = dist[u] + w; prev[b] = u; }
+  }
+  return { dist, prev, order };
+}
+/** Bellman-Ford: true shortest distances, or null if a negative cycle is reachable. */
+export function bellmanFord(n, edges, src) {
+  const dist = new Array(n).fill(Infinity), prev = new Array(n).fill(-1);
+  dist[src] = 0;
+  for (let i = 0; i < n - 1; i++) for (const [a, b, w] of edges) if (dist[a] + w < dist[b]) { dist[b] = dist[a] + w; prev[b] = a; }
+  for (const [a, b, w] of edges) if (dist[a] + w < dist[b]) return null;
+  return { dist, prev };
+}
+export function pathTo(prev, t) { const p = []; for (let v = t; v >= 0; v = prev[v]) p.unshift(v); return p; }

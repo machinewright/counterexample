@@ -84,6 +84,36 @@ export const LEVELS = [
     hint: 'Plan the best schedule first: four meetings back to back. The rule should be tempted by one quiet meeting across the boundary between two of them. So make the four look busy: stack extra requests on them, but none on the quiet one.',
     why: 'A clash count only looks at the neighbourhood. A meeting can look quiet while it sits exactly on the boundary between two meetings the best schedule needs; crowd those two with extra requests and the rule takes the quiet one. On this day it takes ten requests to set the trap, and no smaller list works. Booking whatever ends first, from level 3, still gets the best schedule every time.',
   },
+  {
+    id: 'mint', kind: 'coins', title: 'A new coin',
+    claim: 'US coins (1, 5, 10 and 25 cents) are safe for greedy change. Add any one new coin and they stay safe: an extra coin can only make change easier.',
+    setup: 'Choose the new coin, then an amount. Greedy pays with the largest coin that fits, again and again.',
+    coins: [1, 5, 10, 25], newCoin: { min: 2, max: 99, start: 2 }, max: 200,
+    goal: 'Find a new coin and an amount where greedy uses more coins than needed.',
+    bonus: { goal: 'the smallest amount that works, with any new coin', done: 'No new coin breaks greedy on an amount below 8.', smallest: 8 },
+    hint: 'Greedy breaks when the big coin it grabs leaves an awkward remainder. Which amounts can two of your new coin pay exactly?',
+    why: 'With a 4-cent coin, greedy pays 8 as 5+1+1+1 instead of 4+4. Plenty of new coins are harmless (2, 3, 15, 40 and 50 among them), and you can settle any coin set with a finite check: Kozen and Zaks proved that if greedy ever fails, it already fails on an amount below the sum of the two largest coins. The US did mint a 20-cent piece in the 1870s. With it, greedy pays 40 as 25+10+5 instead of 20+20.',
+  },
+  {
+    id: 'dijkstra', kind: 'paths', mode: 'dijkstra', title: 'Negative',
+    claim: 'Dijkstra\'s algorithm finds the shortest path. A negative weight is no problem, as long as no loop adds up to less than zero.',
+    setup: 'Dijkstra settles the nearest unsettled point, updates its neighbours, and repeats; once a point is settled its distance never changes. Change the weights with − and +. The small numbers show the order it settles them. Orange is the path Dijkstra reports; the thick green band is the true shortest.',
+    names: ['S', 'A', 'B', 'T'], pos: [[0.08, 0.5], [0.5, 0.13], [0.5, 0.87], [0.92, 0.5]],
+    edges: [[0, 1, 2], [0, 2, 4], [2, 1, 1], [1, 3, 3], [2, 3, 6]], editable: [0, 1, 2, 3, 4], min: -9, max: 9,
+    goal: 'Make Dijkstra report the wrong distance from S to T.',
+    hint: 'Dijkstra settles A for good before it looks at B\'s edges. What if B → A were so cheap that going through B was the better way to A?',
+    why: 'Once Dijkstra settles a point it never looks back. That is safe when weights are at least zero, because any path found later is at least as long; a negative edge breaks that guarantee. Bellman-Ford, which checks every edge again and again, handles negative weights (and spots negative loops) at the price of speed.',
+  },
+  {
+    id: 'shift', kind: 'paths', mode: 'shift', title: 'Just add a constant',
+    claim: 'Dijkstra can\'t handle negative weights? Then add the same amount to every weight until none is negative, and run Dijkstra on that. The shortest path stays the shortest.',
+    setup: 'The page adds just enough to every weight to make the smallest one zero, runs Dijkstra on the shifted weights, and prices the path it finds with the real weights.',
+    names: ['S', 'A', 'B', 'T'], pos: [[0.08, 0.72], [0.36, 0.13], [0.64, 0.13], [0.92, 0.72]],
+    edges: [[0, 1, 2], [1, 2, 2], [2, 3, 2], [0, 3, 5]], editable: [0, 1, 2, 3], min: -9, max: 9,
+    goal: 'Make the shifted run pick a path that is not the shortest.',
+    hint: 'Adding 3 to every weight adds 3 to a one-step path but 9 to a three-step path.',
+    why: 'Adding a constant to every edge charges each path once per edge, so paths with more edges get pushed up more and the ranking changes. The idea can be rescued, though: Johnson\'s algorithm gives each point its own adjustment, worked out with Bellman-Ford, so that every path between the same two points changes by the same amount.',
+  },
 ];
 
 for (const L of LEVELS) if (L.kind === 'colour') L.adj = adjacency(L.n, L.edges);

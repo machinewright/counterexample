@@ -108,3 +108,20 @@ footer { margin-top: 3em; color: var(--muted); font-size: 14.5px; border-top: 1p
   .track.new .muted { font-size: 12px; }
 }
 .mk.cnt { color: #a8650f; font-weight: 500; }
+
+/* paths */
+svg.paths .edge { stroke-width: 2.5; }
+svg.paths .hl { stroke: transparent; stroke-width: 9; stroke-linecap: round; }
+svg.paths .hl.true { stroke: #1d7a48; stroke-opacity: .3; }
+svg.paths .edge.alg { stroke: #a8650f; stroke-width: 3; }
+svg.paths .wt { font: 700 15px var(--sans); text-anchor: middle; dominant-baseline: central; fill: #1f2430; paint-order: stroke; stroke: #fff; stroke-width: 5px; }
+svg.paths .v circle { fill: #fff; }
+.weights { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 10px; }
+.wbox { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.wbox .wl { font: 600 14px ui-monospace, Menlo, monospace; margin-right: 2px; }
+.wbox output { min-width: 2em; text-align: center; font-size: 16px; }
+.wbox button { padding: 5px 10px; }
+.wbox.fixed { color: var(--muted); }
+.alg-t { color: #a8650f; font-weight: 600; } .true-t { color: #1d7a48; font-weight: 600; }
+svg.paths .badge circle { fill: #1f2430; stroke: none; }
+svg.paths .badge text { fill: #fff; font: 700 11px var(--sans); }
