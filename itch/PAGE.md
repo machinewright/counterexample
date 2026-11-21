@@ -28,9 +28,9 @@ You build the input that breaks it: an amount, a colouring order, a list of meet
 edge weights, cities on a map, ballots, populations. The algorithm runs live on whatever you build,
 so you can watch exactly where it goes wrong.
 
-Breaking the claim earns the first star. The second star asks for the **smallest** counterexample, and that
-number isn't a guess: every one was proven by trying every smaller input (one proof checks 94 million lists of
-meetings). The source has the proofs.
+Breaking the claim earns the first star. On most levels a second star asks for the **smallest** counterexample
+(once, the worst case), and that number isn't a guess: each one was proven by exhaustive search (one proof checks
+94 million lists of meetings). The source has the proofs.
 
 - 15 levels: greedy change, first-fit colouring, interval scheduling, LRU vs FIFO, Dijkstra, nearest-neighbour
   tours, instant-runoff paradoxes, the Alabama paradox, Bélády's anomaly.
