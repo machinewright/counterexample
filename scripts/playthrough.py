@@ -1,6 +1,6 @@
 # Wins all levels (with the smallest answers) at 1100 and 360px and checks for console errors.
 # Needs the local server: python3 -m http.server 8781 --bind 127.0.0.1 (from the repo root).
-import sys
+import sys, os
 from playwright.sync_api import sync_playwright
 URL = sys.argv[1] if len(sys.argv) > 1 else 'http://127.0.0.1:8781/'
 def meetings(pg, ms):
@@ -31,7 +31,7 @@ STEPS = [
 ]
 bad = 0
 with sync_playwright() as p:
-    b = p.chromium.launch()
+    b = getattr(p, os.environ.get('BROWSER', 'chromium')).launch()
     for w in (1100, 360):
         errs = []
         pg = b.new_page(viewport={'width': w, 'height': 900})
